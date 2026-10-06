@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: booking-service
+
+  profiles:
+    default: local
+
+  config:
+    import:
+      - "optional:file:.env[.properties]"
+      - "optional:file:../.env[.properties]"
+
+  jackson:
+    time-zone: UTC
+
+  mvc:
+    servlet:
+      path: /api
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+server:
+  port: ${SERVER_PORT}
+
+ticket-service:
+  base-url: ${TICKET_SERVICE_URL:http://localhost:1488/api}
+
+logging:
+  pattern:
+    dateformat: "yyyy-MM-dd HH:mm:ss"
+  level:
+    root: INFO
+    me.ifmo.booking_service: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.orm.jdbc.bind: INFO
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    try-it-out-enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+---
+spring:
+  config:
+    activate:
+      on-profile: helios
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver

@@ -24,7 +24,7 @@ public class TicketServiceClient {
 
     private final RestClient ticketServiceRestClient;
 
-    public void require(Long ticketId) {
+    public void requireTicket(Long ticketId) {
         TicketLookupResponse response = handleRequest(() -> ticketServiceRestClient.get().uri("/tickets/{id}", ticketId)
                         .retrieve().toEntity(TicketLookupResponse.class), "Ticket with id '%s' not found".formatted(ticketId));
 

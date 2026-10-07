@@ -85,26 +85,26 @@ public class BookingController {
 
     @GetMapping("/{id}")
     @ApiResponse(responseCode = "200", description = "Booking found", useReturnTypeSchema = true)
-    @Operation(summary = "Get a booking by id", responses = {
+    @Operation(summary = "Get a booking by id", description = "Returns the stored booking without fetching or modifying the ticket.", responses = {
             @ApiResponse(responseCode = "400", description = "Booking id must be a positive integer within the int64 range",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Booking not found",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
-    public BookingResponse getById(@Parameter(description = "Booking id", example = "1") @PathVariable @Positive Long id) {
+    public BookingResponse getById(@Parameter(description = "Booking id", example = "1", schema = @Schema(minimum = "1")) @PathVariable @Positive Long id) {
         return service.getById(id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponse(responseCode = "204", description = "Booking deleted; the ticket remains unchanged", content = @Content)
-    @Operation(summary = "Delete a booking", responses = {
+    @Operation(summary = "Delete a booking", description = "Deletes only the booking. The ticket is not modified.", responses = {
             @ApiResponse(responseCode = "400", description = "Booking id must be a positive integer within the int64 range",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Booking not found",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
-    public void delete(@Parameter(description = "Booking id", example = "1") @PathVariable @Positive Long id) {
+    public void delete(@Parameter(description = "Booking id", example = "1", schema = @Schema(minimum = "1")) @PathVariable @Positive Long id) {
         service.delete(id);
     }
 
@@ -114,7 +114,7 @@ public class BookingController {
             @ApiResponse(responseCode = "400", description = "Person id must be a positive integer within the int64 range",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
-    public PersonBookingCancelResponse cancelByPerson(@Parameter(description = "Person id", example = "1") @PathVariable @Positive Long personId) {
+    public PersonBookingCancelResponse cancelByPerson(@Parameter(description = "Person id", example = "1", schema = @Schema(minimum = "1")) @PathVariable @Positive Long personId) {
         return service.cancelByPerson(personId);
     }
 
@@ -132,7 +132,7 @@ public class BookingController {
             @ApiResponse(responseCode = "504", description = "Ticket Service request timed out",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
-    public EventBookingCancelResponse cancelByEvent(@Parameter(description = "Event id", example = "15") @PathVariable @Positive Integer eventId) {
+    public EventBookingCancelResponse cancelByEvent(@Parameter(description = "Event id", example = "15", schema = @Schema(minimum = "1")) @PathVariable @Positive Integer eventId) {
         return service.cancelByEvent(eventId);
     }
 }

@@ -34,6 +34,8 @@ server:
 
 ticket-service:
   base-url: ${TICKET_SERVICE_URL:http://localhost:1488/api}
+  connect-timeout: ${TICKET_SERVICE_CONNECT_TIMEOUT:2s}
+  read-timeout: ${TICKET_SERVICE_READ_TIMEOUT:5s}
 
 logging:
   pattern:

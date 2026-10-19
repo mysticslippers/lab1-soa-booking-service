@@ -5,17 +5,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 import java.util.Map;
 
-@Schema(description = "Uniform error response. Internal exceptions and stack traces are never exposed.")
+@Schema(description = "Единый формат ответа об ошибке. Внутренние исключения и трассировки стека не раскрываются.")
 public record ApiErrorResponse(
-        @Schema(description = "HTTP response status.", example = "422", minimum = "400", maximum = "599", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Код состояния HTTP-ответа.", example = "422", minimum = "400", maximum = "599", requiredMode = Schema.RequiredMode.REQUIRED)
         int status,
-        @Schema(description = "Machine-readable error code.", example = "VALIDATION_ERROR", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Машинный код ошибки.", example = "VALIDATION_ERROR", requiredMode = Schema.RequiredMode.REQUIRED)
         String error,
-        @Schema(description = "Human-readable English error description.", example = "Invalid request body fields", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Текстовое описание ошибки на английском языке.", example = "Invalid request body fields", requiredMode = Schema.RequiredMode.REQUIRED)
         String message,
-        @Schema(description = "Field validation errors; an empty object for errors without field details.", example = "{\"personId\":\"must be greater than 0\"}", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Ошибки проверки полей; пустой объект, если сведения об отдельных полях отсутствуют.", example = "{\"personId\":\"must be greater than 0\"}", requiredMode = Schema.RequiredMode.REQUIRED)
         Map<String, String> details,
-        @Schema(description = "UTC time when the error occurred; see the complete response examples.", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Время возникновения ошибки в UTC; см. полные примеры ответов.", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
         Instant timestamp
 ) {
 }

@@ -34,15 +34,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@Tag(name = "Bookings")
+@Tag(name = "Бронирования")
 @RequiredArgsConstructor
 @RequestMapping(value = "/booking", produces = MediaType.APPLICATION_JSON_VALUE)
 @ApiResponses({
-        @ApiResponse(responseCode = "405", description = "HTTP method not allowed; supported methods are listed in Allow",
+        @ApiResponse(responseCode = "405", description = "Метод HTTP не поддерживается; допустимые методы перечислены в заголовке Allow",
                 content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-        @ApiResponse(responseCode = "406", description = "Requested response format is not supported",
+        @ApiResponse(responseCode = "406", description = "Запрошенный формат ответа не поддерживается",
                 content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected server error",
+        @ApiResponse(responseCode = "500", description = "Непредвиденная ошибка сервера",
                 content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
 })
 public class BookingController {
@@ -50,25 +50,25 @@ public class BookingController {
     private final BookingService service;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponse(responseCode = "201", description = "Booking created", useReturnTypeSchema = true,
-            headers = @Header(name = "Location", description = "URI of the created booking",
+    @ApiResponse(responseCode = "201", description = "Бронирование создано", useReturnTypeSchema = true,
+            headers = @Header(name = "Location", description = "URI созданного бронирования",
                     schema = @Schema(type = "string", format = "uri")))
-    @Operation(summary = "Create a booking", description = "Verifies that the ticket exists in Ticket Service. The personId and ticketId pair must be unique.", responses = {
-            @ApiResponse(responseCode = "400", description = "Malformed or missing JSON body",
+    @Operation(summary = "Создать бронирование", description = "Проверяет существование билета в Ticket Service. Пара personId и ticketId должна быть уникальной.", responses = {
+            @ApiResponse(responseCode = "400", description = "Тело JSON отсутствует или имеет некорректный формат",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Ticket not found",
+            @ApiResponse(responseCode = "404", description = "Билет не найден",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "409", description = "Booking for this person and ticket already exists",
+            @ApiResponse(responseCode = "409", description = "Бронирование для этого пользователя и билета уже существует",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "415", description = "Unsupported request content type",
+            @ApiResponse(responseCode = "415", description = "Неподдерживаемый тип содержимого запроса",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "422", description = "personId or ticketId is missing or is not positive",
+            @ApiResponse(responseCode = "422", description = "personId или ticketId отсутствует либо не является положительным числом",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "502", description = "Ticket Service returned an invalid response or an unexpected HTTP status",
+            @ApiResponse(responseCode = "502", description = "Сервис билетов вернул некорректный ответ или неожиданный код состояния HTTP",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "503", description = "Ticket Service is unavailable",
+            @ApiResponse(responseCode = "503", description = "Сервис билетов недоступен",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "504", description = "Ticket Service request timed out",
+            @ApiResponse(responseCode = "504", description = "Истекло время ожидания ответа сервиса билетов",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(
@@ -84,55 +84,55 @@ public class BookingController {
     }
 
     @GetMapping("/{id}")
-    @ApiResponse(responseCode = "200", description = "Booking found", useReturnTypeSchema = true)
-    @Operation(summary = "Get a booking by id", description = "Returns the stored booking without fetching or modifying the ticket.", responses = {
-            @ApiResponse(responseCode = "400", description = "Booking id must be a positive integer within the int64 range",
+    @ApiResponse(responseCode = "200", description = "Бронирование найдено", useReturnTypeSchema = true)
+    @Operation(summary = "Получить бронирование по идентификатору", description = "Возвращает сохранённое бронирование без получения или изменения билета.", responses = {
+            @ApiResponse(responseCode = "400", description = "Идентификатор бронирования должен быть положительным целым числом в диапазоне int64",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Booking not found",
+            @ApiResponse(responseCode = "404", description = "Бронирование не найдено",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
-    public BookingResponse getById(@Parameter(description = "Booking id", example = "1", schema = @Schema(minimum = "1")) @PathVariable @Positive Long id) {
+    public BookingResponse getById(@Parameter(description = "Идентификатор бронирования", example = "1", schema = @Schema(minimum = "1")) @PathVariable @Positive Long id) {
         return service.getById(id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiResponse(responseCode = "204", description = "Booking deleted; the ticket remains unchanged", content = @Content)
-    @Operation(summary = "Delete a booking", description = "Deletes only the booking. The ticket is not modified.", responses = {
-            @ApiResponse(responseCode = "400", description = "Booking id must be a positive integer within the int64 range",
+    @ApiResponse(responseCode = "204", description = "Бронирование удалено; билет не изменён", content = @Content)
+    @Operation(summary = "Удалить бронирование", description = "Удаляет только бронирование. Билет не изменяется.", responses = {
+            @ApiResponse(responseCode = "400", description = "Идентификатор бронирования должен быть положительным целым числом в диапазоне int64",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Booking not found",
+            @ApiResponse(responseCode = "404", description = "Бронирование не найдено",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
-    public void delete(@Parameter(description = "Booking id", example = "1", schema = @Schema(minimum = "1")) @PathVariable @Positive Long id) {
+    public void delete(@Parameter(description = "Идентификатор бронирования", example = "1", schema = @Schema(minimum = "1")) @PathVariable @Positive Long id) {
         service.delete(id);
     }
 
     @DeleteMapping("/person/{personId}/cancel")
-    @ApiResponse(responseCode = "200", description = "Deleted booking count", useReturnTypeSchema = true)
-    @Operation(summary = "Cancel a person's bookings", description = "Deletes only bookings. Tickets remain unchanged. A person with no bookings returns a zero count.", responses = {
-            @ApiResponse(responseCode = "400", description = "Person id must be a positive integer within the int64 range",
+    @ApiResponse(responseCode = "200", description = "Количество удалённых бронирований", useReturnTypeSchema = true)
+    @Operation(summary = "Отменить бронирования пользователя", description = "Удаляет только бронирования. Билеты не изменяются. Если у пользователя нет бронирований, возвращается нулевое количество.", responses = {
+            @ApiResponse(responseCode = "400", description = "Идентификатор пользователя должен быть положительным целым числом в диапазоне int64",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
-    public PersonBookingCancelResponse cancelByPerson(@Parameter(description = "Person id", example = "1", schema = @Schema(minimum = "1")) @PathVariable @Positive Long personId) {
+    public PersonBookingCancelResponse cancelByPerson(@Parameter(description = "Идентификатор пользователя", example = "1", schema = @Schema(minimum = "1")) @PathVariable @Positive Long personId) {
         return service.cancelByPerson(personId);
     }
 
     @DeleteMapping("/event/{eventId}/cancel")
-    @ApiResponse(responseCode = "200", description = "Deleted ticket and booking counts", useReturnTypeSchema = true)
-    @Operation(summary = "Cancel an event's tickets and bookings", description = "Deletes tickets through Ticket Service, then deletes their bookings locally. The event object is preserved. An existing event with no tickets returns zero counts. Deletion across the two services is not atomic.", responses = {
-            @ApiResponse(responseCode = "400", description = "Event id must be a positive integer within the int32 range",
+    @ApiResponse(responseCode = "200", description = "Количество удалённых билетов и бронирований", useReturnTypeSchema = true)
+    @Operation(summary = "Отменить билеты и бронирования события", description = "Удаляет билеты через Ticket Service, затем удаляет их бронирования в локальной базе. Само событие сохраняется. Для существующего события без билетов возвращаются нулевые счётчики. Удаление в двух сервисах не является атомарной операцией.", responses = {
+            @ApiResponse(responseCode = "400", description = "Идентификатор события должен быть положительным целым числом в диапазоне int32",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Event not found",
+            @ApiResponse(responseCode = "404", description = "Событие не найдено",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "502", description = "Ticket Service returned an invalid response or an unexpected HTTP status",
+            @ApiResponse(responseCode = "502", description = "Сервис билетов вернул некорректный ответ или неожиданный код состояния HTTP",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "503", description = "Ticket Service is unavailable",
+            @ApiResponse(responseCode = "503", description = "Сервис билетов недоступен",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "504", description = "Ticket Service request timed out",
+            @ApiResponse(responseCode = "504", description = "Истекло время ожидания ответа сервиса билетов",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
-    public EventBookingCancelResponse cancelByEvent(@Parameter(description = "Event id", example = "15", schema = @Schema(minimum = "1")) @PathVariable @Positive Integer eventId) {
+    public EventBookingCancelResponse cancelByEvent(@Parameter(description = "Идентификатор события", example = "15", schema = @Schema(minimum = "1")) @PathVariable @Positive Integer eventId) {
         return service.cancelByEvent(eventId);
     }
 }

@@ -29,7 +29,11 @@ public class OpenApiConfig {
     public OpenAPI bookingServiceOpenApi(
             @Value("${OPENAPI_SERVER_URL:${spring.mvc.servlet.path}}") String serverUrl) {
         return new OpenAPI()
+                .info(new Info().title("API сервиса бронирований").version("1.0.0")
+                        .description("Хранение бронирований билетов пользователями отдельно от Ticket Service. При отмене билетов и бронирований события вызывается Ticket Service по HTTP, затем удаляются локальные бронирования; эти удаления не являются атомарной операцией. Тела запросов и ответов передаются в формате JSON. Ошибки проверки полей тела запроса возвращают 422; некорректное тело запроса и недопустимые параметры URL — 400."))
+                .servers(List.of(new Server().url(serverUrl).description("Базовый URL API; в путях ниже префикс /api не повторяется")))
                 .tags(List.of(
+                        new Tag().name("Бронирования").description("Создание, поиск, удаление бронирований и их отмена по пользователю или событию.")
                 ));
     }
 
@@ -50,7 +54,10 @@ public class OpenApiConfig {
             });
             api.getPaths().forEach((path, item) -> item.readOperationsMap().forEach((method, operation) -> {
                 operation.getResponses().putIfAbsent("405", new ApiResponse()
+                        .description("Метод HTTP не поддерживается; допустимые методы перечислены в заголовке Allow"));
                 if (!path.equals("/"))
+                    operation.getResponses().putIfAbsent("406", new ApiResponse().description("Запрошенный формат ответа не поддерживается"));
+                operation.getResponses().putIfAbsent("500", new ApiResponse().description("Непредвиденная ошибка сервера"));
 
                 operation.getResponses().forEach((code, response) -> {
                     if (code.startsWith("4") || code.startsWith("5")) {
@@ -63,6 +70,7 @@ public class OpenApiConfig {
                                     .flatMap(allowedMethod -> allowedMethod.name().equals("GET")
                                             ? java.util.stream.Stream.of("GET", "HEAD") : java.util.stream.Stream.of(allowedMethod.name()))
                                     .toList());
+                            response.addHeaderObject("Allow", new Header().description("Поддерживаемые методы HTTP")
                                     .schema(new StringSchema()).example(allowed));
                         }
                     } else if (response.getContent() != null) {
